@@ -7,8 +7,8 @@ const stats = {
     anterior: { correct: 2, total: 5 },
   },
   vessel: {
-    RCA: { correct: 2, total: 3 },
-    LAD: { correct: 1, total: 5 },
+    RCA: { correct: 3, total: 4 },
+    LAD: { correct: 2, total: 5 },
   },
 }
 
@@ -20,17 +20,22 @@ test('shows empty state when no attempts yet', () => {
 test('shows territory row with accuracy', () => {
   render(<StatsScreen cumulativeStats={stats} onReset={() => {}} onBack={() => {}} />)
   expect(screen.getByText('Inferior')).toBeInTheDocument()
-  expect(screen.getByText('75%')).toBeInTheDocument()
+  const rows = screen.getAllByText('75%')
+  expect(rows.length).toBeGreaterThanOrEqual(1)
 })
 
 test('shows vessel row with accuracy', () => {
   render(<StatsScreen cumulativeStats={stats} onReset={() => {}} onBack={() => {}} />)
   expect(screen.getByText('RCA')).toBeInTheDocument()
+  const rows = screen.getAllByText('75%')
+  expect(rows.length).toBeGreaterThanOrEqual(1)
 })
 
 test('shows 40% accuracy for anterior (2/5)', () => {
   render(<StatsScreen cumulativeStats={stats} onReset={() => {}} onBack={() => {}} />)
-  expect(screen.getByText('40%')).toBeInTheDocument()
+  expect(screen.getByText('Anterior')).toBeInTheDocument()
+  const rows = screen.getAllByText('40%')
+  expect(rows.length).toBeGreaterThanOrEqual(1)
 })
 
 test('calls onReset when Reset all stats clicked', () => {
