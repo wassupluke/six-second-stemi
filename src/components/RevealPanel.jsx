@@ -46,6 +46,10 @@ export function RevealPanel({ ecg, selectedTerritory, selectedVessel, onNext }) 
         ))}
       </div>
 
+      {ecg.attribution && (
+        <p className="text-xs text-gray-500 italic">{ecg.attribution}</p>
+      )}
+
       <button
         onClick={onNext}
         className="self-end px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded transition-colors"

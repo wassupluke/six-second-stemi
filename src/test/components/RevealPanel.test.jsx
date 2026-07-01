@@ -51,3 +51,14 @@ test('calls onNext when Next ECG button clicked', () => {
   fireEvent.click(screen.getByText('Next ECG →'))
   expect(onNext).toHaveBeenCalled()
 })
+
+test('shows attribution when present', () => {
+  const ecgWithAttribution = { ...ecg, attribution: 'Life In The Fast Lane — CC BY-NC-SA 4.0' }
+  render(<RevealPanel ecg={ecgWithAttribution} selectedTerritory="inferior" selectedVessel="RCA" onNext={() => {}} />)
+  expect(screen.getByText('Life In The Fast Lane — CC BY-NC-SA 4.0')).toBeInTheDocument()
+})
+
+test('omits attribution when not present', () => {
+  render(<RevealPanel ecg={ecg} selectedTerritory="inferior" selectedVessel="RCA" onNext={() => {}} />)
+  expect(screen.queryByText(/Life In The Fast Lane/)).not.toBeInTheDocument()
+})
