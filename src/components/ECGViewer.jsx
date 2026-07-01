@@ -3,7 +3,7 @@ export function ECGViewer({ ecg }) {
     <div className="w-full h-full flex items-center justify-center bg-black">
       <img
         src={ecg.image}
-        alt="12-lead ECG"
+        alt={`12-lead ECG — case ${ecg.id}`}
         className="max-w-full max-h-full object-contain"
       />
     </div>

@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react'
+import { vi } from 'vitest'
 import { ChoiceList } from '../../components/ChoiceList'
 
 const options = [
@@ -42,7 +43,12 @@ test('shows wrong selection in red after reveal', () => {
 })
 
 test('unselected options stay neutral after reveal', () => {
-  render(<ChoiceList options={options} selected="anterior" onSelect={() => {}} correctId="inferior" />)
-  // 'anterior' is wrong (red), 'inferior' is correct (green) — both covered by above tests
-  // Verify neutral option is neither green nor red (would be a third option if we had one)
+  const threeOptions = [
+    ...options, // existing options
+    { id: 'lateral', label: 'Lateral' },
+  ]
+  render(<ChoiceList options={threeOptions} selected="anterior" onSelect={() => {}} correctId="inferior" />)
+  const neutral = screen.getByRole('button', { name: 'Lateral' })
+  expect(neutral).not.toHaveClass('bg-green-600')
+  expect(neutral).not.toHaveClass('bg-red-600')
 })

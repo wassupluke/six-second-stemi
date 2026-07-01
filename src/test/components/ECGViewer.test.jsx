@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { ECGViewer } from '../../components/ECGViewer'
 
-const ecg = { image: '/ecgs/ecg-001.jpg', territory: 'inferior', vessel: 'RCA' }
+const ecg = { id: 'ecg-001', image: '/ecgs/ecg-001.jpg', territory: 'inferior', vessel: 'RCA' }
 
 test('renders image with correct src', () => {
   render(<ECGViewer ecg={ecg} />)
@@ -10,5 +10,5 @@ test('renders image with correct src', () => {
 
 test('renders image with descriptive alt text', () => {
   render(<ECGViewer ecg={ecg} />)
-  expect(screen.getByRole('img')).toHaveAttribute('alt', '12-lead ECG')
+  expect(screen.getByRole('img')).toHaveAttribute('alt', '12-lead ECG — case ecg-001')
 })

@@ -16,7 +16,7 @@ export function PracticeScreen({ ecgs, session, onSessionComplete }) {
       setRevealed(true)
       session.gradeAnswer(currentECG, selectedTerritory, selectedVessel)
     }
-  }, [selectedTerritory, selectedVessel])
+  }, [selectedTerritory, selectedVessel]) // eslint-disable-line react-hooks/exhaustive-deps -- gradeAnswer and currentECG intentionally omitted: effect must fire on selection change only, not on every gradeAnswer identity change
 
   function handleSelect(type, id) {
     if (type === 'territory') setSelectedTerritory(id)

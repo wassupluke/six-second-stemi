@@ -1,6 +1,7 @@
 import { TERRITORIES, VESSELS } from '../data/constants'
 
 function pct(correct, total) {
+  if (total === 0) return '—'
   return Math.round((correct / total) * 100) + '%'
 }
 
