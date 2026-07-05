@@ -24,10 +24,12 @@ export function ScreenOverlay({ variant, caseObj, result, onStart, onNext, onPre
     )
   }
   if (variant === 'reveal' && caseObj) {
+    const label = diagnosisById(caseObj.diagnosis)?.label ?? caseObj.diagnosis
+    const name = caseObj.mimic ? `${label} (${caseObj.mimic})` : `${label} STEMI`
     return (
       <Card>
         <h2 className="text-lg font-bold text-trace">
-          {result?.correct ? '✓ Correct' : '✗ Incorrect'}
+          {result?.correct ? '✓ ' : '✗ Incorrect — '}{name}
         </h2>
         {caseObj.culprit && caseObj.culprit !== '-' && (
           <p className="text-sm text-trace/80 mt-1">Culprit: {caseObj.culprit}</p>
