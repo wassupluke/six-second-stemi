@@ -3,14 +3,16 @@
 @tailwind utilities;
 
 @layer utilities {
-  /* Seamless horizontal scroll: track holds two identical tiles; -50% loops. */
+  /* Seamless horizontal scroll: track holds two identical tiles laid out at
+     their true pixel width (width: max-content), so -50% moves exactly one
+     tile and loops. */
   @keyframes ecg-scroll {
     from { transform: translateX(0); }
     to   { transform: translateX(-50%); }
   }
   .ecg-track {
     display: flex;
-    width: 200%;
+    width: max-content;
     height: 100%;
     will-change: transform;
     animation: ecg-scroll linear infinite;

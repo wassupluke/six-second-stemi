@@ -1,5 +1,6 @@
 import { NORMAL_LEADS, DIAGNOSIS_TEMPLATES, R_BOOST } from '../data/templates'
 import { leadPoints } from './lead'
+import { beatWidthPx } from './beat'
 
 export function pointsToPath(points) {
   if (points.length === 0) return ''
@@ -27,8 +28,14 @@ export function leadMorphology(diagnosisId, lead) {
   }
 }
 
-export function synthLead(caseObj, lead, { baselineY, beats = 4 }) {
+// Builds a lead's scrolling tile. Beat count is derived from `minWidthPx` so the
+// tile always overflows the visible cell (at least 4 beats), which keeps the
+// two-copy scroll seamless AND preserves true horizontal scale: at a given
+// heart rate the beat width is fixed, so more beats fit a faster rate. Pass an
+// explicit `beats` to bypass the width calculation (used by unit tests).
+export function synthLead(caseObj, lead, { baselineY, minWidthPx = 0, beats }) {
   const morph = leadMorphology(caseObj.diagnosis, lead)
-  const { points, width, beatWidth } = leadPoints(morph, { bpm: caseObj.bpm, baselineY, beats })
+  const n = beats ?? Math.max(4, Math.ceil(minWidthPx / beatWidthPx(caseObj.bpm)))
+  const { points, width, beatWidth } = leadPoints(morph, { bpm: caseObj.bpm, baselineY, beats: n })
   return { d: pointsToPath(points), width, beatWidth }
 }

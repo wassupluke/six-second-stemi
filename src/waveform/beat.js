@@ -1,5 +1,11 @@
 export const ECG = { PX_PER_MM: 4, MM_PER_SEC: 25 }
 
+// Real-time ECG paper speed in px/s (25 mm/s at 4 px/mm). Scrolling the trace
+// at this constant speed keeps the on-screen sweep at true paper speed, so the
+// heart rate shows up as beat spacing — faster HR = complexes closer together
+// and more of them passing per second.
+export const PAPER_SPEED_PX_PER_SEC = ECG.MM_PER_SEC * ECG.PX_PER_MM
+
 // Fixed complex durations in seconds (independent of heart rate).
 const DUR = { preGap: 0.04, p: 0.09, pr: 0.05, q: 0.02, r: 0.045, s: 0.02, st: 0.10, t: 0.16 }
 
