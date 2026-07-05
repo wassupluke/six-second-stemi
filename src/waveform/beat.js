@@ -54,5 +54,8 @@ export function beatPoints(morph, opts) {
 
   // TP baseline fills the remainder of the RR interval
   pts.push([beatWidth, baselineY])
-  return pts
+
+  // Clamp every y into [0, 2*baselineY] so a lead can never draw outside
+  // its coordinate box, no matter how extreme an amplitude/ST value is.
+  return pts.map(([px, py]) => [px, Math.max(0, Math.min(2 * baselineY, py))])
 }

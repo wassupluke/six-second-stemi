@@ -28,4 +28,14 @@ describe('beatPoints', () => {
     const mean = ys => ys.reduce((a, b) => a + b, 0) / ys.length
     expect(mean(region(elev))).toBeLessThan(mean(region(flat)))
   })
+  it('clamps points within [0, 2*baselineY] for extreme amplitudes', () => {
+    const pts = beatPoints({ r: 100, s: 100, st: 100, t: 100 }, { bpm: 60, baselineY: 50 })
+    for (const [, y] of pts) {
+      expect(y).toBeGreaterThanOrEqual(0)
+      expect(y).toBeLessThanOrEqual(100)
+    }
+    // seam preserved
+    expect(pts[0][1]).toBe(50)
+    expect(pts[pts.length - 1][1]).toBeCloseTo(50, 5)
+  })
 })

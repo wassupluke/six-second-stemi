@@ -1,9 +1,14 @@
 import { useState } from 'react'
 import { synthLead } from '../waveform/synth'
 
+// Tall internal coordinate box: real QRS amplitudes need far more than the
+// ~70px display height. The SVG viewBox uses this height and is scaled down
+// to fit the cell via preserveAspectRatio="none", so nothing clips.
+const COORD_H = 220
+
 export function Lead({ caseObj, lead, animated, durationSec = 6, height = 80 }) {
   const [hovered, setHovered] = useState(false)
-  const baselineY = height / 2
+  const baselineY = COORD_H / 2
   const tile = caseObj ? synthLead(caseObj, lead, { baselineY, beats: 4 }) : null
   const paused = !animated || hovered
 
@@ -24,12 +29,19 @@ export function Lead({ caseObj, lead, animated, durationSec = 6, height = 80 }) 
               key={i}
               width={tile.width}
               height={height}
-              viewBox={`0 0 ${tile.width} ${height}`}
+              viewBox={`0 0 ${tile.width} ${COORD_H}`}
               preserveAspectRatio="none"
               className="h-full"
               style={{ flex: '0 0 50%' }}
             >
-              <path d={tile.d} fill="none" stroke="currentColor" strokeWidth="1.5" className="text-trace" />
+              <path
+                d={tile.d}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                vectorEffect="non-scaling-stroke"
+                className="text-trace"
+              />
             </svg>
           ))}
         </div>
