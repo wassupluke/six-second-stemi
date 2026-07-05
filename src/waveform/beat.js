@@ -3,6 +3,20 @@ export const ECG = { PX_PER_MM: 4, MM_PER_SEC: 25 }
 // Fixed complex durations in seconds (independent of heart rate).
 const DUR = { preGap: 0.04, p: 0.09, pr: 0.05, q: 0.02, r: 0.045, s: 0.02, st: 0.10, t: 0.16 }
 
+// Seconds occupied by the P-QRS-ST-T complex (everything but the TP baseline).
+const COMPLEX_SEC = DUR.preGap + DUR.p + DUR.pr + DUR.q + DUR.r + DUR.s + DUR.st + DUR.t
+
+// Horizontal px of one beat (RR interval) at the given heart rate. Single
+// source of truth so beat.js and lead.js can never drift and break the seam.
+export function beatWidthPx(bpm) {
+  return (60 / bpm) * ECG.MM_PER_SEC * ECG.PX_PER_MM
+}
+
+// Above this rate the complex is wider than the RR interval, so the waveform
+// would fold back on itself (non-monotonic x). Cases are validated against it
+// in src/data/cases.js.
+export const MAX_BPM = Math.floor(60 / COMPLEX_SEC)
+
 // Sample a smooth half-sine hump of `heightPx` (up = negative y) over `width` px.
 function hump(x0, width, baseYFn, heightPx, steps = 8) {
   const pts = []
@@ -20,7 +34,7 @@ export function beatPoints(morph, opts) {
   const m = { p: 0, q: 0, r: 0, s: 0, st: 0, t: 0, ...morph }
   const secPx = s => s * ECG.MM_PER_SEC * ECG.PX_PER_MM
   const mmPx = mm => mm * ECG.PX_PER_MM
-  const beatWidth = secPx(60 / bpm)
+  const beatWidth = beatWidthPx(bpm)
   const y = mm => baselineY - mmPx(mm) // + amplitude => up (smaller y)
   const stY = y(m.st)
 

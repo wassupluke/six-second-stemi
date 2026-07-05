@@ -17,17 +17,20 @@ export function useGame({ gameMinutes, onGrade }) {
 
   const currentCase = phase === 'idle' || phase === 'gameover' ? null : (deck[index] ?? null)
 
-  // 1 Hz countdown, only while playing or answered (timer freezes on 'answered').
+  // 1 Hz countdown while playing (freezes on 'answered'). The updater stays
+  // pure; the gameover transition is handled by the effect below.
   useEffect(() => {
     if (phase !== 'playing') return undefined
     const id = setInterval(() => {
-      setTimerRemaining(t => {
-        if (t <= 1) { clearInterval(id); setPhase('gameover'); return 0 }
-        return t - 1
-      })
+      setTimerRemaining(t => (t > 0 ? t - 1 : 0))
     }, 1000)
     return () => clearInterval(id)
   }, [phase])
+
+  // End the game when the clock runs out.
+  useEffect(() => {
+    if (phase === 'playing' && timerRemaining === 0) setPhase('gameover')
+  }, [phase, timerRemaining])
 
   const start = useCallback((difficulty) => {
     difficultyRef.current = difficulty
@@ -65,15 +68,13 @@ export function useGame({ gameMinutes, onGrade }) {
   }, [phase, deck, index, chancesLeft, onGrade])
 
   const next = useCallback(() => {
-    setIndex(i => {
-      const ni = i + 1
-      if (ni >= deck.length) { setPhase('gameover'); return i }
-      setChancesLeft(CHANCES[difficultyRef.current] ?? 3)
-      setLastResult(null)
-      setPhase('playing')
-      return ni
-    })
-  }, [deck.length])
+    const ni = index + 1
+    if (ni >= deck.length) { setPhase('gameover'); return }
+    setIndex(ni)
+    setChancesLeft(CHANCES[difficultyRef.current] ?? 3)
+    setLastResult(null)
+    setPhase('playing')
+  }, [index, deck.length])
 
   const reset = useCallback(() => {
     setPhase('idle')

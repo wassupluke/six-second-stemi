@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 
 const STORAGE_KEY = 'stemi-cumulative-stats'
 const emptyStats = () => ({ diagnosis: {} })
@@ -21,24 +21,22 @@ export function useSession() {
   const [cumulativeStats, setCumulativeStats] = useState(readStorage)
   const [sessionProgress, setSessionProgress] = useState({ answered: 0, correct: 0 })
 
+  useEffect(() => {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cumulativeStats)) } catch { /* ignore */ }
+  }, [cumulativeStats])
+
   const gradeAnswer = useCallback((caseObj, selectedDiagnosisId) => {
     const correct = selectedDiagnosisId === caseObj.diagnosis
     setSessionProgress(prev => ({
       answered: prev.answered + 1,
       correct: prev.correct + (correct ? 1 : 0),
     }))
-    setCumulativeStats(prev => {
-      const next = { diagnosis: bump(prev.diagnosis, caseObj.diagnosis, correct) }
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)) } catch { /* ignore */ }
-      return next
-    })
+    setCumulativeStats(prev => ({ diagnosis: bump(prev.diagnosis, caseObj.diagnosis, correct) }))
     return correct
   }, [])
 
   const resetStats = useCallback(() => {
-    const empty = emptyStats()
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(empty)) } catch { /* ignore */ }
-    setCumulativeStats(empty)
+    setCumulativeStats(emptyStats())
   }, [])
 
   return { sessionProgress, cumulativeStats, gradeAnswer, resetStats }

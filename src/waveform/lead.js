@@ -1,8 +1,8 @@
-import { ECG, beatPoints } from './beat'
+import { beatWidthPx, beatPoints } from './beat'
 
 export function leadPoints(morph, opts) {
   const { bpm, baselineY, beats = 4 } = opts
-  const beatWidth = (60 / bpm) * ECG.MM_PER_SEC * ECG.PX_PER_MM
+  const beatWidth = beatWidthPx(bpm)
   const points = []
   for (let b = 0; b < beats; b++) {
     const bp = beatPoints(morph, { bpm, baselineY })

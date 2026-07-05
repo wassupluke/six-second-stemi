@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 
 const KEY = 'stemi-options'
 const DEFAULTS = { gameMinutes: 5, display: 'dynamic', grid: true, volume: 0.6, muted: false }
@@ -14,12 +14,11 @@ function read() {
 
 export function useOptions() {
   const [options, setOptions] = useState(read)
+  useEffect(() => {
+    try { localStorage.setItem(KEY, JSON.stringify(options)) } catch { /* ignore */ }
+  }, [options])
   const setOption = useCallback((key, value) => {
-    setOptions(prev => {
-      const next = { ...prev, [key]: value }
-      try { localStorage.setItem(KEY, JSON.stringify(next)) } catch { /* ignore */ }
-      return next
-    })
+    setOptions(prev => ({ ...prev, [key]: value }))
   }, [])
   return { options, setOption }
 }
