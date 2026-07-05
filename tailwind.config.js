@@ -16,5 +16,6 @@ export default {
       },
     },
   },
+  safelist: ['border-learn', 'border-game'],
   plugins: [],
 }
