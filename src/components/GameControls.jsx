@@ -5,16 +5,16 @@ function fmt(sec) {
 }
 function pct(n, d) { return d ? Math.round((100 * n) / d) : 0 }
 
-export function GameControls({ phase, timerRemaining, chancesLeft, counters, onReset }) {
+export function GameControls({ phase, timerRemaining, chancesLeft, maxChances, counters, onReset }) {
   return (
     <div className="flex items-center justify-between px-3 py-1.5 bg-bezel/90 border-b border-grid/50 text-sm text-trace">
       <div className="flex gap-4">
         <span>Cases: {counters.cases}</span>
         <span>Correct: {counters.correct} ({pct(counters.correct, counters.cases)}%)</span>
-        <span>Attempts: {counters.attempts}</span>
+        <span>Attempts: {counters.attempts} ({pct(counters.correct, counters.attempts)}%)</span>
       </div>
       <div className="flex items-center gap-4">
-        {phase === 'playing' && chancesLeft < 3 && chancesLeft > 0 && (
+        {phase === 'playing' && chancesLeft < maxChances && chancesLeft > 0 && (
           <span className="text-trace/80">{chancesLeft} Chance{chancesLeft === 1 ? '' : 's'} Remaining</span>
         )}
         <span className="font-mono text-lg tabular-nums bg-black/40 px-2 rounded">{fmt(timerRemaining)}</span>

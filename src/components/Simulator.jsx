@@ -80,6 +80,7 @@ export function Simulator() {
       <BottomBar
         mode={mode}
         onMode={setMode}
+        onOpenStats={() => setModal('stats')}
         onOpenOptions={() => setModal('options')}
         muted={options.muted}
         onToggleMute={() => setOption('muted', !options.muted)}
@@ -88,10 +89,6 @@ export function Simulator() {
       {modal === 'stats' && (
         <StatsPanel cumulativeStats={session.cumulativeStats} onReset={session.resetStats} onClose={() => setModal(null)} />
       )}
-      {/* stats entry point: a small link in the bottom-left via BottomBar could open it; expose through options for now */}
-      <button className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[10px] text-trace/40" onClick={() => setModal('stats')}>
-        stats
-      </button>
     </div>
   )
 }

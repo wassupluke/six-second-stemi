@@ -1,4 +1,4 @@
-export function BottomBar({ mode, onMode, onOpenOptions, muted, onToggleMute }) {
+export function BottomBar({ mode, onMode, onOpenStats, onOpenOptions, muted, onToggleMute }) {
   const tab = (id, label, accent) => (
     <button
       onClick={() => onMode(id)}
@@ -15,6 +15,7 @@ export function BottomBar({ mode, onMode, onOpenOptions, muted, onToggleMute }) 
         {tab('game', 'GAME', 'game')}
       </div>
       <div className="flex items-center gap-3">
+        <button aria-label="Stats" onClick={onOpenStats} className="text-trace/80 hover:text-trace">📊</button>
         <button aria-label="Options" onClick={onOpenOptions} className="text-trace/80 hover:text-trace">⚙</button>
         <button aria-label={muted ? 'Unmute' : 'Mute'} onClick={onToggleMute} className="text-trace/80 hover:text-trace">
           {muted ? '🔇' : '🔊'}

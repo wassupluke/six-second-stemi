@@ -4,17 +4,24 @@ import { BottomBar } from '../../components/BottomBar'
 import { OptionsModal } from '../../components/OptionsModal'
 
 describe('BottomBar', () => {
+  const noop = () => {}
   it('switches modes', () => {
     const onMode = vi.fn()
-    const { getByText } = render(<BottomBar mode="learn" onMode={onMode} onOpenOptions={() => {}} muted={false} onToggleMute={() => {}} />)
+    const { getByText } = render(<BottomBar mode="learn" onMode={onMode} onOpenStats={noop} onOpenOptions={noop} muted={false} onToggleMute={noop} />)
     fireEvent.click(getByText('GAME'))
     expect(onMode).toHaveBeenCalledWith('game')
   })
   it('opens options', () => {
     const onOpen = vi.fn()
-    const { getByLabelText } = render(<BottomBar mode="learn" onMode={() => {}} onOpenOptions={onOpen} muted={false} onToggleMute={() => {}} />)
+    const { getByLabelText } = render(<BottomBar mode="learn" onMode={noop} onOpenStats={noop} onOpenOptions={onOpen} muted={false} onToggleMute={noop} />)
     fireEvent.click(getByLabelText(/options/i))
     expect(onOpen).toHaveBeenCalled()
+  })
+  it('opens stats', () => {
+    const onOpenStats = vi.fn()
+    const { getByLabelText } = render(<BottomBar mode="learn" onMode={noop} onOpenStats={onOpenStats} onOpenOptions={noop} muted={false} onToggleMute={noop} />)
+    fireEvent.click(getByLabelText(/stats/i))
+    expect(onOpenStats).toHaveBeenCalled()
   })
 })
 

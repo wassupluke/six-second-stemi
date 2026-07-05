@@ -8,6 +8,7 @@ export function ControlBar({ mode, game }) {
         phase={game.phase}
         timerRemaining={game.timerRemaining}
         chancesLeft={game.chancesLeft}
+        maxChances={game.maxChances}
         counters={game.counters}
         onReset={game.reset}
       />

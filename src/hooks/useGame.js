@@ -9,6 +9,7 @@ export function useGame({ gameMinutes, onGrade }) {
   const [deck, setDeck] = useState([])
   const [index, setIndex] = useState(0)
   const [chancesLeft, setChancesLeft] = useState(0)
+  const [maxChances, setMaxChances] = useState(0)
   const [timerRemaining, setTimerRemaining] = useState(gameMinutes * 60)
   const [counters, setCounters] = useState({ cases: 0, correct: 0, attempts: 0 })
   const [lastResult, setLastResult] = useState(null)
@@ -33,6 +34,7 @@ export function useGame({ gameMinutes, onGrade }) {
     setDeck(shuffle(getDeck(difficulty)))
     setIndex(0)
     setChancesLeft(CHANCES[difficulty] ?? 3)
+    setMaxChances(CHANCES[difficulty] ?? 3)
     setTimerRemaining(gameMinutes * 60)
     setCounters({ cases: 0, correct: 0, attempts: 0 })
     setLastResult(null)
@@ -79,5 +81,5 @@ export function useGame({ gameMinutes, onGrade }) {
     setTimerRemaining(gameMinutes * 60)
   }, [gameMinutes])
 
-  return { phase, currentCase, chancesLeft, timerRemaining, counters, lastResult, start, answer, next, reset }
+  return { phase, currentCase, chancesLeft, maxChances, timerRemaining, counters, lastResult, start, answer, next, reset }
 }
