@@ -1,7 +1,7 @@
 # Six-Second STEMI — Simulator Design Spec
 
 **Date:** 2026-07-04
-**Status:** Draft (awaiting user review)
+**Status:** Approved (2026-07-04)
 **Supersedes:** `2026-06-26-stemi-design.md` (static-image, two-column territory+vessel design). This spec replaces the interaction model and screen; the localStorage/stats plumbing and the React/Vite/Vitest scaffold carry over.
 
 ## Overview
@@ -372,10 +372,17 @@ the animation and the correctness of the generated geometry.
 5. **CSS grid background** (gradient), not an image, so the graph paper needs no asset.
 6. Keep concurrent animated layers bounded (12 lead tracks + shared keyframe) and profiled.
 
+## Resolved at review (2026-07-04)
+
+- Runtime SVG synthesis: **confirmed** (PNG pre-raster remains a documented fallback only).
+- Default game length: **5 minutes**, configurable 1–8.
+- Lead-II rhythm strip at the bottom: **confirmed** (13 traces total).
+- LEARN lists **only the 8 diagnosis buttons** — mimics are taught solely through
+  "No STEMI" reveal text, never as separate LEARN entries.
+
 ## Open questions (deferred, not blocking)
 
 - Exact case count for launch and how many mimics under "No STEMI".
 - Whether v1 ships a QRS-click sound or leaves audio as a persisted-but-silent stub.
-- Whether LEARN lists only the 8 buttons or also the named mimics as separate teaching entries.
 - Final visual theme (reference-blue "LEARN" / orange "GAME" screen tints vs. a neutral
   clinical palette) — cosmetic, resolved during implementation.
