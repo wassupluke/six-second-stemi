@@ -8,11 +8,11 @@ describe('EcgScreen', () => {
   it('carries the shared hover-freeze class so all tracks pause together', () => {
     // The .ecg-screen:hover rule in index.css pauses every .ecg-track at once;
     // per-lead pausing would permanently desync the hovered lead on resume.
-    const { container } = render(<EcgScreen caseObj={c} animated grid overlay={null} />)
+    const { container } = render(<EcgScreen caseObj={c} animated grid />)
     expect(container.firstChild.classList.contains('ecg-screen')).toBe(true)
   })
   it('renders the 12-lead grid and the rhythm strip', () => {
-    const { getAllByText } = render(<EcgScreen caseObj={c} animated grid overlay={null} />)
+    const { getAllByText } = render(<EcgScreen caseObj={c} animated grid />)
     expect(getAllByText('II').length).toBe(2) // grid cell + rhythm strip
   })
 })

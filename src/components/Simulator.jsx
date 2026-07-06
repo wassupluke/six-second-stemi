@@ -64,7 +64,8 @@ export function Simulator() {
   return (
     <div className="relative w-full max-w-3xl mx-auto flex flex-col rounded-lg overflow-hidden shadow-2xl">
       <TitleBar bpm={shownCase?.bpm ?? null} />
-      <EcgScreen caseObj={shownCase} animated={animated} grid={options.grid} overlay={overlay} />
+      <EcgScreen caseObj={shownCase} animated={animated} grid={options.grid} />
+      {overlay}
       <ControlBar mode={mode} game={game} />
       <AnswerGrid
         mode={mode}

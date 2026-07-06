@@ -72,10 +72,15 @@ export function ScreenOverlay({ variant, caseObj, result, onStart, onNext, onPre
   return null
 }
 
+// Rendered in normal flow below the ECG screen (not overlaid on it) so the
+// feedback never covers any waveform or fights the lead labels' z-order —
+// reviewing an answer needs the traces it talks about to stay visible.
 function Card({ children }) {
   return (
-    <div className="absolute inset-x-0 bottom-0 m-3 p-4 rounded-lg bg-bezel/95 backdrop-blur border border-grid/50">
-      {children}
+    <div className="bg-screen border-t border-grid/40">
+      <div className="m-3 p-4 rounded-lg bg-bezel/95 border border-grid/50">
+        {children}
+      </div>
     </div>
   )
 }
