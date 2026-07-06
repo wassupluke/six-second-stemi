@@ -18,6 +18,9 @@
     animation: ecg-scroll linear infinite;
   }
   .ecg-paused { animation-play-state: paused; }
+  /* Hovering the screen freezes every track together. One shared rule — never
+     per-lead state — so no track can pause alone and drift out of phase. */
+  .ecg-screen:hover .ecg-track { animation-play-state: paused; }
 
   /* Graph paper as pure CSS — no image asset. 1mm minor, 5mm major at 4px/mm. */
   .ecg-grid {

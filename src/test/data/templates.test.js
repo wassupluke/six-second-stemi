@@ -32,7 +32,7 @@ describe('leadMorphology + synthLead', () => {
     expect(m.r).toBe(NORMAL_LEADS.II.r)
   })
   it('synthLead returns a non-empty path and positive width', () => {
-    const out = synthLead({ diagnosis: 'anterior', bpm: 80 }, 'V2', { baselineY: 40, beats: 4 })
+    const out = synthLead({ diagnosis: 'anterior', bpm: 80 }, 'V2', { baselineY: 40, minWidthPx: 0 })
     expect(out.d.startsWith('M')).toBe(true)
     expect(out.width).toBeGreaterThan(0)
   })

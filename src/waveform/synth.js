@@ -31,11 +31,18 @@ export function leadMorphology(diagnosisId, lead) {
 // Builds a lead's scrolling tile. Beat count is derived from `minWidthPx` so the
 // tile always overflows the visible cell (at least 4 beats), which keeps the
 // two-copy scroll seamless AND preserves true horizontal scale: at a given
-// heart rate the beat width is fixed, so more beats fit a faster rate. Pass an
-// explicit `beats` to bypass the width calculation (used by unit tests).
-export function synthLead(caseObj, lead, { baselineY, minWidthPx = 0, beats }) {
+// heart rate the beat width is fixed, so more beats fit a faster rate.
+export function synthLead(caseObj, lead, { baselineY, minWidthPx }) {
+  // Bad inputs would otherwise flow into an invalid CSS animation-duration and
+  // render a silently frozen or empty trace — fail loudly instead.
+  if (!(Number.isFinite(caseObj.bpm) && caseObj.bpm > 0)) {
+    throw new Error(`synthLead: caseObj.bpm must be a positive number, got ${caseObj.bpm}`)
+  }
+  if (!Number.isFinite(minWidthPx)) {
+    throw new Error(`synthLead: minWidthPx must be a number, got ${minWidthPx}`)
+  }
   const morph = leadMorphology(caseObj.diagnosis, lead)
-  const n = beats ?? Math.max(4, Math.ceil(minWidthPx / beatWidthPx(caseObj.bpm)))
-  const { points, width, beatWidth } = leadPoints(morph, { bpm: caseObj.bpm, baselineY, beats: n })
-  return { d: pointsToPath(points), width, beatWidth }
+  const beats = Math.max(4, Math.ceil(minWidthPx / beatWidthPx(caseObj.bpm)))
+  const { points, width } = leadPoints(morph, { bpm: caseObj.bpm, baselineY, beats })
+  return { d: pointsToPath(points), width }
 }

@@ -7,7 +7,7 @@ export function LeadGrid({ caseObj, animated }) {
   return (
     <div className="grid grid-cols-4 grid-rows-3 w-full">
       {LEADS.map(lead => (
-        <Lead key={lead} caseObj={caseObj} lead={lead} animated={animated} minWidthPx={300} height={70} />
+        <Lead key={lead} caseObj={caseObj} lead={lead} animated={animated} height={70} />
       ))}
     </div>
   )

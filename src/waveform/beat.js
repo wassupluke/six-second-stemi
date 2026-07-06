@@ -15,7 +15,7 @@ const COMPLEX_SEC = DUR.preGap + DUR.p + DUR.pr + DUR.q + DUR.r + DUR.s + DUR.st
 // Horizontal px of one beat (RR interval) at the given heart rate. Single
 // source of truth so beat.js and lead.js can never drift and break the seam.
 export function beatWidthPx(bpm) {
-  return (60 / bpm) * ECG.MM_PER_SEC * ECG.PX_PER_MM
+  return (60 / bpm) * PAPER_SPEED_PX_PER_SEC
 }
 
 // Above this rate the complex is wider than the RR interval, so the waveform
@@ -38,7 +38,7 @@ function hump(x0, width, baseYFn, heightPx, steps = 8) {
 export function beatPoints(morph, opts) {
   const { bpm, baselineY } = opts
   const m = { p: 0, q: 0, r: 0, s: 0, st: 0, t: 0, ...morph }
-  const secPx = s => s * ECG.MM_PER_SEC * ECG.PX_PER_MM
+  const secPx = s => s * PAPER_SPEED_PX_PER_SEC
   const mmPx = mm => mm * ECG.PX_PER_MM
   const beatWidth = beatWidthPx(bpm)
   const y = mm => baselineY - mmPx(mm) // + amplitude => up (smaller y)

@@ -2,6 +2,13 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+> **Doc drift (2026-07-06):** The `Lead` API shown in this plan is outdated. The
+> `durationSec` prop no longer exists: `Lead` now measures its own container
+> width (`useContainerWidth`) to size the scrolling tile, and derives the scroll
+> duration from tile width at the fixed 25 mm/s paper speed
+> (`PAPER_SPEED_PX_PER_SEC`). Treat `src/components/Lead.jsx` as the source of
+> truth; code snippets below are historical.
+
 **Goal:** Build a client-side STEMI-recognition trainer that clones the look/feel/interaction of SkillStat's 6-Second ECG simulator, with an animated 12-lead ECG synthesized from data, LEARN/GAME modes, and one-click territory answering.
 
 **Architecture:** Pure-function waveform layer (`src/waveform/`) turns per-lead morphology parameters into seamless-tiling SVG paths; React components render them in a fixed-aspect "simulator" stage and animate them with a single GPU-composited CSS `transform` keyframe (no `<canvas>`, no per-frame JS). Three hooks own state: `useOptions` (persisted settings), `useSession` (cumulative localStorage stats), and `useGame` (the GAME state machine). Everything is bundled at build time — zero runtime network — and deploys as static files to GitHub Pages behind a Cloudflare domain.
