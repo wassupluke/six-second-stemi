@@ -20,7 +20,7 @@ describe('ScreenOverlay', () => {
       <ScreenOverlay variant="reveal" caseObj={c} result={{ correct: true, selected: 'inferior' }} onNext={onNext} />
     )
     expect(getByRole('heading', { name: /Inferior STEMI/i })).toBeInTheDocument()
-    expect(getByText(/RCA/)).toBeInTheDocument()
+    expect(getByText(/Culprit: RCA/)).toBeInTheDocument()
     expect(getByText('Inferior STEMI teaching text.')).toBeInTheDocument()
     expect(getByText('III')).toBeInTheDocument()
     fireEvent.click(getByText(/Next Case/i))
@@ -39,5 +39,28 @@ describe('ScreenOverlay', () => {
       <ScreenOverlay variant="reveal" caseObj={nc} result={{ correct: true, selected: 'no-stemi' }} onNext={() => {}} />
     )
     expect(getByRole('heading', { name: /No STEMI \(benign early repolarization\)/i })).toBeInTheDocument()
+  })
+  it('learn shows nursing considerations for the territory', () => {
+    const { getByText } = render(
+      <ScreenOverlay variant="learn" caseObj={c} onPrev={() => {}} onNextLearn={() => {}} />
+    )
+    expect(getByText(/Nursing considerations/i)).toBeInTheDocument()
+    expect(getByText(/Papillary muscle rupture/i)).toBeInTheDocument()
+    expect(getByText(/hold nitrates, morphine, and diuretics/i)).toBeInTheDocument()
+  })
+  it('reveal shows nursing considerations for the territory', () => {
+    const { getByText } = render(
+      <ScreenOverlay variant="reveal" caseObj={c} result={{ correct: true, selected: 'inferior' }} onNext={() => {}} />
+    )
+    expect(getByText(/Nursing considerations/i)).toBeInTheDocument()
+    expect(getByText(/Papillary muscle rupture/i)).toBeInTheDocument()
+  })
+  it('omits nursing considerations for no-stemi cases', () => {
+    const nc = { diagnosis: 'no-stemi', mimic: 'normal', culprit: '-',
+      leads_affected: [], explanation: 'Normal ECG teaching text.' }
+    const { queryByText } = render(
+      <ScreenOverlay variant="reveal" caseObj={nc} result={{ correct: true, selected: 'no-stemi' }} onNext={() => {}} />
+    )
+    expect(queryByText(/Nursing considerations/i)).not.toBeInTheDocument()
   })
 })

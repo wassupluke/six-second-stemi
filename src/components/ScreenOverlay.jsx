@@ -1,4 +1,23 @@
 import { diagnosisById } from '../data/diagnoses'
+import { NURSING } from '../data/nursing'
+
+function NursingNotes({ diagnosisId }) {
+  const notes = NURSING[diagnosisId]
+  if (!notes) return null
+  return (
+    <div className="mt-3 pt-3 border-t border-grid/40">
+      <h3 className="text-sm font-bold text-trace">Nursing considerations</h3>
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-trace/60 mt-2">Watch for</p>
+      <ul className="list-disc pl-4 mt-1 space-y-1">
+        {notes.watch.map(s => <li key={s} className="text-trace/85 text-sm">{s}</li>)}
+      </ul>
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-trace/60 mt-2">Preload / afterload / contractility</p>
+      <ul className="list-disc pl-4 mt-1 space-y-1">
+        {notes.hemodynamics.map(s => <li key={s} className="text-trace/85 text-sm">{s}</li>)}
+      </ul>
+    </div>
+  )
+}
 
 function Badges({ leads }) {
   return (
@@ -36,6 +55,7 @@ export function ScreenOverlay({ variant, caseObj, result, onStart, onNext, onPre
         )}
         <p className="text-trace/85 text-sm mt-2">{caseObj.explanation}</p>
         {caseObj.leads_affected?.length > 0 && <Badges leads={caseObj.leads_affected} />}
+        <NursingNotes diagnosisId={caseObj.diagnosis} />
         <div className="flex justify-end mt-3">
           <button className="px-4 py-2 rounded bg-game text-white font-semibold" onClick={onNext}>Next Case →</button>
         </div>
@@ -53,6 +73,7 @@ export function ScreenOverlay({ variant, caseObj, result, onStart, onNext, onPre
         </div>
         <p className="text-trace/85 text-sm mt-2">{caseObj.explanation}</p>
         {caseObj.leads_affected?.length > 0 && <Badges leads={caseObj.leads_affected} />}
+        <NursingNotes diagnosisId={caseObj.diagnosis} />
       </Card>
     )
   }
