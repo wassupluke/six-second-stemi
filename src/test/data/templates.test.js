@@ -36,7 +36,7 @@ describe('leadMorphology + synthLead', () => {
     expect(out.d.startsWith('M')).toBe(true)
     expect(out.width).toBeGreaterThan(0)
   })
-  it('every case lead stays within the 220px coordinate box (no clipping)', () => {
+  it('every case lead stays within the 220px coordinate box (clamped, never drawn outside)', () => {
     const COORD_H = 220, baselineY = 110
     for (const c of CASES) {
       for (const lead of LEADS) {

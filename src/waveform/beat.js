@@ -6,6 +6,14 @@ export const ECG = { PX_PER_MM: 4, MM_PER_SEC: 25 }
 // and more of them passing per second.
 export const PAPER_SPEED_PX_PER_SEC = ECG.MM_PER_SEC * ECG.PX_PER_MM
 
+// Vertical amplitude gain. The tall coordinate box (COORD_H=220px in Lead.jsx)
+// is scaled down to the ~70px cell (x70/220 ~= 0.32), which would otherwise draw
+// amplitudes at only ~1/3 of the grid's true 4px/mm (10mm/mV) scale — QRS
+// complexes look far too short against the graph paper. This gain restores the
+// on-screen height to ~true mm/mV. (Exact-true would be 220/70 ~= 3.14; 3 keeps
+// the tallest R waves from overrunning the cell too aggressively.)
+export const AMPLITUDE_GAIN = 3
+
 // Fixed complex durations in seconds (independent of heart rate).
 const DUR = { preGap: 0.04, p: 0.09, pr: 0.05, q: 0.02, r: 0.045, s: 0.02, st: 0.10, t: 0.16 }
 
@@ -39,7 +47,7 @@ export function beatPoints(morph, opts) {
   const { bpm, baselineY } = opts
   const m = { p: 0, q: 0, r: 0, s: 0, st: 0, t: 0, ...morph }
   const secPx = s => s * PAPER_SPEED_PX_PER_SEC
-  const mmPx = mm => mm * ECG.PX_PER_MM
+  const mmPx = mm => mm * ECG.PX_PER_MM * AMPLITUDE_GAIN
   const beatWidth = beatWidthPx(bpm)
   const y = mm => baselineY - mmPx(mm) // + amplitude => up (smaller y)
   const stY = y(m.st)
