@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { ECG, beatPoints } from '../../waveform/beat'
+import { ECG, beatPoints, beatWidthPx, phaseOffsetPx } from '../../waveform/beat'
 
 const opts = { bpm: 60, baselineY: 50 }
 
@@ -37,5 +37,16 @@ describe('beatPoints', () => {
     // seam preserved
     expect(pts[0][1]).toBe(50)
     expect(pts[pts.length - 1][1]).toBeCloseTo(50, 5)
+  })
+})
+
+describe('phaseOffsetPx', () => {
+  it('is the screen x-offset reduced mod beat width, in [0, beatWidth)', () => {
+    const bw = beatWidthPx(68)
+    expect(phaseOffsetPx(0, 68)).toBe(0)
+    expect(phaseOffsetPx(2 * bw, 68)).toBeCloseTo(0, 9)
+    expect(phaseOffsetPx(192, 68)).toBeCloseTo(192 - 2 * bw, 9)
+    expect(phaseOffsetPx(192, 68)).toBeGreaterThanOrEqual(0)
+    expect(phaseOffsetPx(192, 68)).toBeLessThan(bw)
   })
 })

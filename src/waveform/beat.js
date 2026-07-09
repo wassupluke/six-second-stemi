@@ -31,6 +31,16 @@ export function beatWidthPx(bpm) {
 // in src/data/cases.js.
 export const MAX_BPM = Math.floor(60 / COMPLEX_SEC)
 
+// How far (px) a lead cell's left screen edge sits past the nearest beat
+// boundary. Every track scrolls in the same global phase *relative to its own
+// cell origin*, so a cell starting at screen x must pull its trace left by
+// this amount for its R waves to land on the same screen-time grid as a cell
+// at x=0 (the bottom lead-II rhythm strip). Result is in [0, beatWidth).
+export function phaseOffsetPx(xLeftPx, bpm) {
+  const bw = beatWidthPx(bpm)
+  return ((xLeftPx % bw) + bw) % bw
+}
+
 // Sample a smooth half-sine hump of `heightPx` (up = negative y) over `width` px.
 function hump(x0, width, baseYFn, heightPx, steps = 8) {
   const pts = []

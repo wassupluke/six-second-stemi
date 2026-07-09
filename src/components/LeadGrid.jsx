@@ -6,8 +6,8 @@ import { LEADS } from '../data/templates'
 export function LeadGrid({ caseObj, animated }) {
   return (
     <div className="grid grid-cols-4 grid-rows-3 w-full">
-      {LEADS.map(lead => (
-        <Lead key={lead} caseObj={caseObj} lead={lead} animated={animated} height={70} />
+      {LEADS.map((lead, i) => (
+        <Lead key={lead} caseObj={caseObj} lead={lead} animated={animated} height={70} col={i % 4} />
       ))}
     </div>
   )

@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { synthLead } from '../waveform/synth'
-import { PAPER_SPEED_PX_PER_SEC } from '../waveform/beat'
+import { PAPER_SPEED_PX_PER_SEC, phaseOffsetPx } from '../waveform/beat'
 import { useContainerWidth } from '../hooks/useContainerWidth'
 
 // Tall internal coordinate box: real QRS amplitudes need far more than the
@@ -11,13 +11,20 @@ import { useContainerWidth } from '../hooks/useContainerWidth'
 const COORD_H = 220
 const BASELINE_Y = COORD_H / 2
 
-export function Lead({ caseObj, lead, animated, height = 80 }) {
+export function Lead({ caseObj, lead, animated, height = 80, col = 0 }) {
   // The two-copy scroll is only seamless while tile width >= cell width, so
   // measure the rendered cell instead of guessing what the layout gives us.
   const [cellRef, cellWidth] = useContainerWidth()
+
+  // All tracks scroll in the same global phase relative to their own cell
+  // origin, but a cell in grid column `col` starts at screen x = col*cellWidth,
+  // which is generally not a multiple of the beat width. Pull the trace left
+  // by that remainder so every lead's R waves line up on the same screen-time
+  // grid as the full-width lead-II rhythm strip (whose offset is 0).
+  const phasePx = caseObj ? phaseOffsetPx(col * cellWidth, caseObj.bpm) : 0
   const tile = useMemo(
-    () => (caseObj ? synthLead(caseObj, lead, { baselineY: BASELINE_Y, minWidthPx: cellWidth }) : null),
-    [caseObj, lead, cellWidth]
+    () => (caseObj ? synthLead(caseObj, lead, { baselineY: BASELINE_Y, minWidthPx: cellWidth + phasePx }) : null),
+    [caseObj, lead, cellWidth, phasePx]
   )
 
   // One tile scrolls past in tile.width / paper-speed seconds → constant real
@@ -34,7 +41,10 @@ export function Lead({ caseObj, lead, animated, height = 80 }) {
         {lead}
       </span>
       {tile && (
-        <div className={`ecg-track ${animated ? '' : 'ecg-paused'}`} style={{ animationDuration: `${durationSec}s` }}>
+        <div
+          className={`ecg-track ${animated ? '' : 'ecg-paused'}`}
+          style={{ animationDuration: `${durationSec}s`, marginLeft: `${-phasePx}px` }}
+        >
           {[0, 1].map(i => (
             <svg
               key={i}
