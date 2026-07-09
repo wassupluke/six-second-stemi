@@ -43,7 +43,10 @@ export function Simulator() {
   // Roll a concrete heart rate once per dealt/browsed case. useMemo's
   // single-slot cache re-rolls whenever shownCase changes (every GAME deal,
   // every LEARN page-turn — including returning to a card) but keeps the
-  // rate stable across re-renders while a case is on screen.
+  // rate stable across re-renders while a case is on screen. Stability leans
+  // on useMemo not discarding its cache, which React only guarantees absent
+  // concurrent features — if this app ever adopts useTransition/Suspense,
+  // move the roll into state keyed on shownCase identity.
   const dealtCase = useMemo(
     () => shownCase && { ...shownCase, bpm: rollBpm(shownCase) },
     [shownCase]

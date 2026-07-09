@@ -9,6 +9,11 @@ describe('Simulator', () => {
     expect(getByText('LEARN')).toBeInTheDocument()
     expect(getByText('Inferior')).toBeInTheDocument()
   })
+  it('shows a rolled numeric heart rate in LEARN (bpm range never leaks to the UI)', () => {
+    const { getByText } = render(<Simulator />)
+    const hr = getByText('Heart Rate').nextSibling
+    expect(hr.textContent).toMatch(/^\d+$/)
+  })
   it('can enter GAME, start novice, and grade a case to reveal', () => {
     const { getByText, queryByText } = render(<Simulator />)
     fireEvent.click(getByText('GAME'))
