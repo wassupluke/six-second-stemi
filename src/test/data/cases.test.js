@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { CASES, getDeck, rollBpm } from '../../data/cases'
+import { CASES, getDeck, rollBpm, assertValidCase } from '../../data/cases'
 import { DIAGNOSIS_IDS } from '../../data/diagnoses'
 import { MAX_BPM } from '../../waveform/beat'
 
@@ -7,17 +7,21 @@ describe('cases', () => {
   it('every case references a valid diagnosis and has required fields', () => {
     for (const c of CASES) {
       expect(DIAGNOSIS_IDS).toContain(c.diagnosis)
-      expect(typeof c.bpm).toBe('number')
+      expect(Array.isArray(c.bpm)).toBe(true)
+      expect(c.bpm).toHaveLength(2)
+      expect(c.bpm.every(Number.isInteger)).toBe(true)
       expect(c.explanation.length).toBeGreaterThan(0)
       expect(['classic', 'subtle']).toContain(c.difficulty)
       expect(Array.isArray(c.leads_affected)).toBe(true)
     }
   })
-  it('every case bpm is within the fold-back-safe range (0, MAX_BPM]', () => {
+  it('every case bpm range is within the fold-back-safe range (0, MAX_BPM]', () => {
     expect(MAX_BPM).toBeGreaterThan(0)
     for (const c of CASES) {
-      expect(c.bpm).toBeGreaterThan(0)
-      expect(c.bpm).toBeLessThanOrEqual(MAX_BPM)
+      const [min, max] = c.bpm
+      expect(min).toBeGreaterThan(0)
+      expect(min).toBeLessThanOrEqual(max)
+      expect(max).toBeLessThanOrEqual(MAX_BPM)
     }
   })
   it('covers all 8 diagnoses at least once', () => {
@@ -56,5 +60,30 @@ describe('rollBpm', () => {
     expect(Number.isInteger(v)).toBe(true)
     expect(v).toBeGreaterThanOrEqual(60)
     expect(v).toBeLessThanOrEqual(105)
+  })
+})
+
+describe('assertValidCase bpm range validation', () => {
+  const base = { id: 'x', diagnosis: 'anterior', bpm: [60, 100] }
+  it('accepts a valid range', () => {
+    expect(() => assertValidCase(base)).not.toThrow()
+  })
+  it('rejects a plain number bpm', () => {
+    expect(() => assertValidCase({ ...base, bpm: 68 })).toThrow(/invalid bpm range/)
+  })
+  it('rejects wrong array length', () => {
+    expect(() => assertValidCase({ ...base, bpm: [60] })).toThrow(/invalid bpm range/)
+  })
+  it('rejects non-integer bounds', () => {
+    expect(() => assertValidCase({ ...base, bpm: [60.5, 100] })).toThrow(/invalid bpm range/)
+  })
+  it('rejects min > max', () => {
+    expect(() => assertValidCase({ ...base, bpm: [100, 60] })).toThrow(/invalid bpm range/)
+  })
+  it('rejects min of 0 or below', () => {
+    expect(() => assertValidCase({ ...base, bpm: [0, 60] })).toThrow(/invalid bpm range/)
+  })
+  it('rejects max above MAX_BPM', () => {
+    expect(() => assertValidCase({ ...base, bpm: [60, MAX_BPM + 1] })).toThrow(/invalid bpm range/)
   })
 })

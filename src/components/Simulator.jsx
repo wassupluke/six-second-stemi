@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { useOptions } from '../hooks/useOptions'
 import { useSession } from '../hooks/useSession'
 import { useGame } from '../hooks/useGame'
-import { CASES } from '../data/cases'
+import { CASES, rollBpm } from '../data/cases'
 import { DIAGNOSIS_IDS } from '../data/diagnoses'
 import { TitleBar } from './TitleBar'
 import { EcgScreen } from './EcgScreen'
@@ -40,6 +40,14 @@ export function Simulator() {
 
   const learnCase = learn[learnIndex] ?? null
   const shownCase = mode === 'game' ? game.currentCase : learnCase
+  // Roll a concrete heart rate once per dealt/browsed case. useMemo's
+  // single-slot cache re-rolls whenever shownCase changes (every GAME deal,
+  // every LEARN page-turn — including returning to a card) but keeps the
+  // rate stable across re-renders while a case is on screen.
+  const dealtCase = useMemo(
+    () => shownCase && { ...shownCase, bpm: rollBpm(shownCase) },
+    [shownCase]
+  )
   const overlayVariant =
     mode === 'learn' ? 'learn'
     : game.phase === 'idle' ? 'intro'
@@ -50,7 +58,7 @@ export function Simulator() {
   const overlay = overlayVariant && (
     <ScreenOverlay
       variant={overlayVariant}
-      caseObj={overlayVariant === 'gameover' ? null : shownCase}
+      caseObj={overlayVariant === 'gameover' ? null : dealtCase}
       result={overlayVariant === 'gameover' ? { ...game.counters } : game.lastResult}
       onStart={game.start}
       onNext={overlayVariant === 'gameover' ? game.reset : game.next}
@@ -63,15 +71,15 @@ export function Simulator() {
 
   return (
     <div className="relative w-full max-w-3xl mx-auto flex flex-col rounded-lg overflow-hidden shadow-2xl">
-      <TitleBar bpm={shownCase?.bpm ?? null} />
-      <EcgScreen caseObj={shownCase} animated={animated} grid={options.grid} />
+      <TitleBar bpm={dealtCase?.bpm ?? null} />
+      <EcgScreen caseObj={dealtCase} animated={animated} grid={options.grid} />
       {overlay}
       <ControlBar mode={mode} game={game} />
       <AnswerGrid
         mode={mode}
         selected={mode === 'learn' ? learnCase?.diagnosis : undefined}
         result={mode === 'game' ? game.lastResult : null}
-        correctId={mode === 'game' ? shownCase?.diagnosis : undefined}
+        correctId={mode === 'game' ? dealtCase?.diagnosis : undefined}
         disabled={answerDisabled}
         onPick={id => {
           if (mode === 'game') game.answer(id)

@@ -2,15 +2,19 @@ import raw from './cases.json'
 import { DIAGNOSIS_IDS } from './diagnoses'
 import { MAX_BPM } from '../waveform/beat'
 
-export const CASES = raw.map(c => {
+// Throws on any authoring error so a bad case fails the build/tests loudly
+// at import time. Exported so the throw paths are unit-testable.
+export function assertValidCase(c) {
   if (!DIAGNOSIS_IDS.includes(c.diagnosis)) {
     throw new Error(`case ${c.id} has unknown diagnosis "${c.diagnosis}"`)
   }
-  if (!(c.bpm > 0 && c.bpm <= MAX_BPM)) {
-    throw new Error(`case ${c.id} has bpm ${c.bpm} outside (0, ${MAX_BPM}] — the waveform would fold back`)
+  if (!Array.isArray(c.bpm) || c.bpm.length !== 2 || !c.bpm.every(Number.isInteger)
+      || !(c.bpm[0] > 0 && c.bpm[0] <= c.bpm[1] && c.bpm[1] <= MAX_BPM)) {
+    throw new Error(`case ${c.id} has invalid bpm range ${JSON.stringify(c.bpm)} — need integers 0 < min <= max <= ${MAX_BPM} or the waveform would fold back`)
   }
-  return c
-})
+}
+
+export const CASES = raw.map(c => { assertValidCase(c); return c })
 
 export function getDeck(difficulty) {
   if (difficulty === 'novice') return CASES.filter(c => c.difficulty === 'classic')
